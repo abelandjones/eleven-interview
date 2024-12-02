@@ -1,0 +1,19 @@
+# repo files ---------------------------------------------------------------- repo files
+
+.gitignore
+.prettierignore
+package-lock.json
+package.json
+README.md
+webpack.config.js
+tailwind.config.js
+prettier.config.mjs
+tsconfig.json
+eslintrc.json
+postcss.config.js
+node_modules
+
+# build files --------------------------------------------------------------- build files
+
+src/
+shopifyignore/

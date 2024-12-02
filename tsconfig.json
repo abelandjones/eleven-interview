@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "incremental": true,
+    "noUncheckedIndexedAccess": true,
+
+    // Modules Configuration
+    "baseUrl": ".",
+    "module": "ES2022",
+    "moduleResolution": "node",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+
+    // Language and Environment Configuration
+    "target": "ES2022",
+    "jsx": "react-jsx",
+
+    // JavaScript Support Configuration
+    "allowJs": true,
+    "checkJs": true,
+
+    // Interop Constraints Configuration
+    "esModuleInterop": true,
+    "isolatedModules": true
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}
