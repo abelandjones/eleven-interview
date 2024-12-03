@@ -1,6 +1,6 @@
 # Developer Brief
 
-Welcome to the **Eleven Developer Brief**! We are excited to seeing your work. This brief is designed to test your skills in front-end development, Shopify, and API integration. Please follow the instructions below to get started.
+Welcome to the **Eleven Developer Brief**! We are excited to see your work. This brief is designed to test your skills in front-end development, Shopify, and API integration. Please follow the instructions below to get started.
 
 ## Setup Details
 
