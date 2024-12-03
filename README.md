@@ -37,7 +37,9 @@ Redesign the existing product card to the example provided. This should be set g
    - **Star Reviews**
    - **Custom pill messaging like the 'Squat Proof'**
 
-**TIP**: Use the metaobject `Linked Products` and metafield `Product Swatch` to get the related products for the swatches.
+**NOTE**: The Product Colour Swatches are **NOT** variants, but other *similar* products in the store. E.g: The Collection Snowboard collection has 3 different snowboards, each with a different colour. The swatches are the other snowboards in the collection.
+
+**TIP**: Use the `Product Groups` & `Product Colour` metaobjects and metafields to get the related products for the swatches.
 
 ![Product Card Example](./assets/product-card-example.png)
 
