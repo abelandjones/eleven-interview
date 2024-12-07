@@ -366,6 +366,11 @@
   margin-top: 1rem;
 }
 
+product-card .card-information {
+  position: relative;
+  z-index: 2;
+}
+
 .card-swatches {
   display: flex;
   gap: 20px;
