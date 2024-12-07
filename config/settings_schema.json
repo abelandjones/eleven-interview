@@ -2,7 +2,7 @@
   {
     "name": "theme_info",
     "theme_name": "Generated Data Theme",
-    "theme_version": "1.0.0",
+    "theme_version": "1.0.1",
     "theme_author": "Shopify",
     "theme_documentation_url": "https:\/\/shopify.dev\/docs\/apps\/tools\/development-stores\/generated-data#themes\/",
     "theme_support_url": "https:\/\/shopify.dev\/docs\/apps\/tools\/development-stores\/generated-data#themes\/"
@@ -1334,6 +1334,35 @@
         ],
         "default": "inverse",
         "label": "t:settings_schema.badges.settings.sold_out_badge_color_scheme.label"
+      },
+      {
+        "type": "select",
+        "id": "custom_badge_color_scheme",
+        "options": [
+          {
+            "value": "accent-1",
+            "label": "t:sections.all.colors.accent_1.label"
+          },
+          {
+            "value": "accent-2",
+            "label": "t:sections.all.colors.accent_2.label"
+          },
+          {
+            "value": "background-1",
+            "label": "t:sections.all.colors.background_1.label"
+          },
+          {
+            "value": "background-2",
+            "label": "t:sections.all.colors.background_2.label"
+          },
+          {
+            "value": "inverse",
+            "label": "t:sections.all.colors.inverse.label"
+          }
+        ],
+        "default": "inverse",
+        "label": "t:settings_schema.badges.settings.custom_badge_color_scheme.label",
+        "info": "t:settings_schema.badges.settings.custom_badge_color_scheme.info"
       }
     ]
   },
