@@ -108,6 +108,10 @@
         },
         "sold_out_badge_color_scheme": {
           "label": "Sold out badge color scheme"
+        },
+        "custom_badge_color_scheme": {
+          "label": "Custom badge color scheme",
+          "info": "Add custom badges using product tags beginning with 'badge_'."
         }
       }
     },

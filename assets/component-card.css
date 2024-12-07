@@ -142,6 +142,9 @@
   align-self: flex-end;
   grid-row-start: 3;
   justify-self: flex-start;
+  display: flex;
+  gap: calc(var(--image-padding) + 1rem);
+  flex-wrap: wrap;
 }
 
 .card__badge.top {
@@ -362,3 +365,58 @@
 .card-article-info {
   margin-top: 1rem;
 }
+
+.card-swatches {
+  display: flex;
+  gap: 20px;
+  margin-top: 1rem !important;
+  flex-wrap: wrap;
+}
+
+.card-swatches__item {
+  /* The outer size */
+  width: 30px; 
+  height: 30px;
+  border: 1px solid rgba(var(--color-foreground), 0.25);
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.3s ease;
+}
+
+.card-swatches__item--active {
+  border: 2px solid rgba(var(--color-foreground));
+}
+
+.card-swatches__inner {
+  /* The swatch is smaller than it's container */
+  width: 75%; 
+  height: 75%;
+
+  /* Ensures clean circular design */
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-swatches__swatch {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /* Ensures inner swatch is circular */
+  border-radius: 50%;
+}
+
+.card-information__row {
+  display: flex;
+  justify-content: space-between;
+}
+
+
