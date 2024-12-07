@@ -193,22 +193,20 @@
                     {%- if product.metafields.custom.product_colour.value != blank -%}
                       <a  
                         id="Swatch-{{ section_id }}-{{ card_product.id }}-{{ product.id }}"
-                        data-product-id="{{ product.id }}"
+                        data-product-handle="{{ product.handle }}"
                         class="card-swatches__item{%- if product == card_product %} card-swatches__item--active{%- endif -%}"
                         href="{{ product.url }}" 
                         aria-label="{{ product.metafields.custom.product_colour.value.label.value }}"
                       >
-                        <div class="card-swatches__inner">
-                          <div
-                            class="card-swatches__swatch"
-                            style="
-                              {%- if product.metafields.custom.product_colour.value.image.value != blank -%}
-                                background-image: url({{ product.metafields.custom.product_colour.value.image | img_url: '1x1' }});
-                              {%- elsif product.metafields.custom.product_colour.value.colour.value != blank -%}
-                                background-color: {{ product.metafields.custom.product_colour.value.colour }};
-                              {%- endif -%}"
-                          >
-                          </div>
+                        <div
+                          class="card-swatches__swatch"
+                          style="
+                            {%- if product.metafields.custom.product_colour.value.image.value != blank -%}
+                              background-image: url({{ product.metafields.custom.product_colour.value.image | image_url: width: 22, height: 22 }});
+                            {%- elsif product.metafields.custom.product_colour.value.colour.value != blank -%}
+                              background-color: {{ product.metafields.custom.product_colour.value.colour }};
+                            {%- endif -%}"
+                        >
                         </div>
                       </a>
                     {%- endif -%}
