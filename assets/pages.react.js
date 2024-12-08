@@ -31336,15 +31336,30 @@
       };
       fetchAllPokemon();
     }, []);
-    const handleSearch = (event) => {
+    const handleSearch = async (event) => {
       const query = event.target.value.toLowerCase();
       setSearchQuery(query);
       const filteredList = pokemonList.filter(
         (pokemon) => pokemon.name.toLowerCase().includes(query)
       );
-      setFilteredPokemonList(filteredList);
+      if (filteredList.length > 0) {
+        try {
+          const detailedData = await Promise.all(
+            filteredList.map(async (pokemon) => {
+              const detailsResponse = await axios_default.get(pokemon.url);
+              return detailsResponse.data;
+            })
+          );
+          setFilteredPokemonList(detailedData);
+          setTotalPages(Math.ceil(detailedData.length / itemsPerPage));
+        } catch (err) {
+          setError("Failed to fetch Pok\xE9mon details for the search results. Please try again later.");
+        }
+      } else {
+        setFilteredPokemonList([]);
+        setTotalPages(0);
+      }
       setCurrentPage(1);
-      setTotalPages(Math.ceil(filteredList.length / itemsPerPage));
     };
     const fetchPokemonDetails = async (startIndex, endIndex) => {
       try {

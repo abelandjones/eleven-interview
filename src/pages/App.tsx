@@ -13,6 +13,10 @@ export function App() {
   const itemsPerPage = 20;
 
   useEffect(() => {
+    /* 
+    ** Fetch all basic Pokemon data (name and URL) from the API. This allows us 
+    ** to search/filter on all names in the dataset.
+    */
     const fetchAllPokemon = async () => {
       try {
         let allPokemon = [];
@@ -35,27 +39,55 @@ export function App() {
     fetchAllPokemon();
   }, []);
 
-  const handleSearch = (event) => {
+  const handleSearch = async (event) => {
+    /*
+    ** Filter our list of Pokemon based on their name.
+    */
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
+    
     const filteredList = pokemonList.filter((pokemon) =>
       pokemon.name.toLowerCase().includes(query)
     );
-    setFilteredPokemonList(filteredList);
+  
+    if (filteredList.length > 0) {
+      /*
+      ** Dynamically fetch detailed Pokemon data for the filtered search 
+      ** results.
+      */
+      try {
+        const detailedData = await Promise.all(
+          filteredList.map(async (pokemon) => {
+            const detailsResponse = await axios.get(pokemon.url);
+            return detailsResponse.data;
+          })
+        );
+        setFilteredPokemonList(detailedData);
+        setTotalPages(Math.ceil(detailedData.length / itemsPerPage));
+      } catch (err) {
+        setError("Failed to fetch Pokémon details for the search results. Please try again later.");
+      }
+    } else {
+      setFilteredPokemonList([]);
+      setTotalPages(0);
+    }
+  
     setCurrentPage(1);
-    setTotalPages(Math.ceil(filteredList.length / itemsPerPage));
   };
 
   const fetchPokemonDetails = async (startIndex, endIndex) => {
+    /*
+    ** Dynamically fetch detailed Pokemon data for the current page.
+    */
     try{
-      const currentPagePokemon = pokemonList.slice(startIndex, endIndex); // Slice from pokemonList, not filteredPokemonList
+      const currentPagePokemon = pokemonList.slice(startIndex, endIndex);
       const detailedData = await Promise.all(
         currentPagePokemon.map(async (pokemon) => {
           const detailsResponse = await axios.get(pokemon.url);
           return detailsResponse.data;
         })
       );
-      setFilteredPokemonList(detailedData); // Only set detailed data for display
+      setFilteredPokemonList(detailedData);
     } catch (err) {
       setError("Failed to fetch Pokémon details. Please try again later.");
     }
