@@ -31316,36 +31316,26 @@
     const [totalPages, setTotalPages] = (0, import_react.useState)(0);
     const itemsPerPage = 20;
     (0, import_react.useEffect)(() => {
-      const fetchPokemon = async () => {
+      const fetchAllPokemon = async () => {
         try {
-          const response = await axios_default.get(
-            `https://pokeapi.co/api/v2/pokemon?limit=${itemsPerPage}&offset=${(currentPage - 1) * itemsPerPage}`
-          );
-          const pokemonDetails = await Promise.all(
-            response.data.results.map(async (pokemon) => {
-              const detailsResponse = await axios_default.get(pokemon.url);
-              return detailsResponse.data;
-            })
-          );
-          setPokemonList(pokemonDetails);
-          setFilteredPokemonList(pokemonDetails);
-          setTotalPages(Math.ceil(response.data.count / itemsPerPage));
+          let allPokemon = [];
+          let nextUrl = "https://pokeapi.co/api/v2/pokemon?limit=200";
+          while (nextUrl) {
+            const response = await axios_default.get(nextUrl);
+            allPokemon = [...allPokemon, ...response.data.results];
+            nextUrl = response.data.next;
+          }
+          setPokemonList(allPokemon);
+          setFilteredPokemonList(allPokemon);
+          setTotalPages(Math.ceil(allPokemon.length / itemsPerPage));
         } catch (err) {
           setError("Failed to fetch Pok\xE9mon data. Please try again later.");
         } finally {
           setLoading(false);
         }
       };
-      fetchPokemon();
-    }, [currentPage]);
-    const handleNextPage = () => {
-      if (currentPage < totalPages)
-        setCurrentPage(currentPage + 1);
-    };
-    const handlePreviousPage = () => {
-      if (currentPage > 1)
-        setCurrentPage(currentPage - 1);
-    };
+      fetchAllPokemon();
+    }, []);
     const handleSearch = (event) => {
       const query = event.target.value.toLowerCase();
       setSearchQuery(query);
@@ -31353,7 +31343,27 @@
         (pokemon) => pokemon.name.toLowerCase().includes(query)
       );
       setFilteredPokemonList(filteredList);
+      setCurrentPage(1);
+      setTotalPages(Math.ceil(filteredList.length / itemsPerPage));
     };
+    const fetchPokemonDetails = async (startIndex, endIndex) => {
+      const currentPagePokemon = pokemonList.slice(startIndex, endIndex);
+      const detailedData = await Promise.all(
+        currentPagePokemon.map(async (pokemon) => {
+          const detailsResponse = await axios_default.get(pokemon.url);
+          return detailsResponse.data;
+        })
+      );
+      setFilteredPokemonList(detailedData);
+    };
+    (0, import_react.useEffect)(() => {
+      if (!searchQuery && pokemonList.length > 0) {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = currentPage * itemsPerPage;
+        fetchPokemonDetails(startIndex, endIndex);
+      }
+    }, [currentPage, pokemonList, searchQuery]);
+    const displayedPokemon = searchQuery ? filteredPokemonList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage) : filteredPokemonList;
     if (loading)
       return /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "text-center text-xl font-bold", children: "Loading..." });
     if (error)
@@ -31370,33 +31380,33 @@
           className: "border border-gray-300 rounded p-2 w-full max-w-md"
         }
       ) }),
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "flex flex-wrap -mx-3", children: filteredPokemonList.map((pokemon) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "w-full sm:w-1/2 lg:w-1/4 xl:w-1/5 px-3 mb-6", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(Card, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "flex flex-wrap -mx-3", children: displayedPokemon.map((pokemon) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "w-full sm:w-1/2 lg:w-1/4 xl:w-1/5 px-3 mb-6", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(Card, { children: [
         /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(CardHeader, { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(CardTitle, { className: "text-center capitalize", children: pokemon.name }) }),
         /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(CardContent, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "w-full h-32 object-contain mb-4 flex items-center justify-center text-gray-500", children: pokemon.sprites?.front_default ? /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
             "img",
             {
               src: pokemon.sprites.front_default,
-              alt: pokemon.name,
-              className: "w-full h-32 object-contain mb-4"
+              alt: pokemon.name || "Image Unavailable",
+              className: "h-full"
             }
-          ),
+          ) : /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: "No Image Available" }) }),
           /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(CardDescription, { children: [
             /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { children: "Height:" }),
             " ",
-            pokemon.height,
+            pokemon.height || "N/A",
             " | ",
             /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { children: "Weight:" }),
             " ",
-            pokemon.weight
+            pokemon.weight || "N/A"
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(CardDescription, { children: [
             /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { children: "Types:" }),
             " ",
-            pokemon.types.map((type) => type.type.name).join(", ")
+            pokemon.types ? pokemon.types.map((type) => type.type.name).join(", ") : "N/A"
           ] })
         ] })
-      ] }) }, pokemon.id)) }),
+      ] }) }, pokemon.name)) }),
       /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex justify-center items-center mt-8", children: [
         /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
           "button",
@@ -31410,7 +31420,7 @@
         /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
           "button",
           {
-            onClick: handlePreviousPage,
+            onClick: () => setCurrentPage((prev) => Math.max(prev - 1, 1)),
             disabled: currentPage === 1,
             className: "mx-2 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50",
             children: "Previous"
@@ -31424,7 +31434,7 @@
         /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
           "button",
           {
-            onClick: handleNextPage,
+            onClick: () => setCurrentPage((prev) => Math.min(prev + 1, totalPages)),
             disabled: currentPage === totalPages,
             className: "mx-2 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50",
             children: "Next"
