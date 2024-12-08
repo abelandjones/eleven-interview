@@ -366,7 +366,7 @@
   margin-top: 1rem;
 }
 
-.product-card-wrapper .card-information {
+product-card .card-information {
   position: relative;
   z-index: 2;
 }

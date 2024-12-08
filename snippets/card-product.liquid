@@ -32,7 +32,10 @@
       assign ratio = 1
     endif
   -%}
-  <div class="card-wrapper product-card-wrapper underline-links-hover">
+  <product-card 
+    id="ProductCard-{{ section_id }}-{{ card_product.id }}"
+    data-section-id="{{ section_id }}"
+    class="card-wrapper product-card-wrapper underline-links-hover">
     <div
       class="
         card
@@ -49,9 +52,9 @@
         class="card__inner {% if settings.card_style == 'standard' %}color-{{ settings.card_color_scheme }} gradient{% endif %}{% if card_product.featured_media or settings.card_style == 'standard' %} ratio{% endif %}"
         style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;"
       >
-        {%- if card_product.featured_media -%}
-          <div class="card__media">
-            <div class="media media--transparent media--hover-effect">
+        <div class="card__media">
+          <div class="media media--transparent media--hover-effect{%- if show_secondary_image %} media--show-secondary-image{%- endif -%}">
+            {%- if card_product.featured_media -%}
               {% comment %}theme-check-disable ImgLazyLoading{% endcomment %}
               <img
                 srcset="
@@ -88,16 +91,16 @@
                   "
                   src="{{ card_product.media[1] | image_url: width: 533 }}"
                   sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 130 | divided_by: 4 }}px, (min-width: 990px) calc((100vw - 130px) / 4), (min-width: 750px) calc((100vw - 120px) / 3), calc((100vw - 35px) / 2)"
-                  alt=""
+                  alt="{{ card_product.media[1].alt | escape }}"
                   class="motion-reduce"
                   loading="lazy"
                   width="{{ card_product.media[1].width }}"
                   height="{{ card_product.media[1].height }}"
                 >
               {%- endif -%}
-            </div>
+            {%- endif -%}
           </div>
-        {%- endif -%}
+        </div>
         <div class="card__content">
           <div class="card__information">
             <h3
@@ -175,7 +178,7 @@
           <div class="card-information">
             {%- if show_vendor -%}
               <span class="visually-hidden">{{ 'accessibility.vendor' | t }}</span>
-              <div class="caption-with-letter-spacing light">{{ card_product.vendor }}</div>
+              <div class="card__vendor caption-with-letter-spacing light">{{ card_product.vendor }}</div>
             {%- endif -%}
 
             <span class="caption-large light">{{ block.settings.description | escape }}</span>
@@ -197,6 +200,9 @@
                         class="card-swatches__item{%- if product == card_product %} card-swatches__item--active{%- endif -%}"
                         href="{{ product.url }}" 
                         aria-label="{{ product.metafields.custom.product_colour.value.label.value }}"
+                        {%- if product.metafields.custom.product_rating.value != blank -%}
+                          data-rating="{{ product.metafields.custom.product_rating.value }}"
+                        {%- endif -%}
                       >
                         <div
                           class="card-swatches__swatch"
@@ -221,14 +227,14 @@
               {%- comment -%}
                 Use custom product rating metafield rather than the default Shopify review rating fields.
               {%- endcomment -%}
-              {%- if show_rating and card_product.metafields.custom.product_rating.value != blank -%}
-                
-                {% liquid
-                  assign rating_value = card_product.metafields.custom.product_rating.value
-                  assign rating_max = 5
-                %}
+              {%- if show_rating -%}
+                {%- assign rating_value = 0 -%}
+                {%- assign rating_max = 5 -%}
+                {%- if card_product.metafields.custom.product_rating.value != blank -%}
+                  {%- assign rating_value = card_product.metafields.custom.product_rating.value -%}
+                {%- endif -%}
                 <div
-                  class="rating"
+                  class="rating{%- if rating_value == 0 %} hidden{%- endif -%}"
                   role="img"
                   aria-label="{{ 'accessibility.star_reviews_info' | t: rating_value: rating_value, rating_max: rating_max }}"
                 >
@@ -378,7 +384,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </product-card>
 {%- else -%}
   <div class="product-card-wrapper card-wrapper underline-links-hover">
     <div

@@ -292,6 +292,7 @@
         soldOut: `{{ 'products.product.sold_out' | t }}`,
         unavailable: `{{ 'products.product.unavailable' | t }}`,
         unavailable_with_option: `{{ 'products.product.value_unavailable' | t: option_value: '[value]' }}`,
+        onSale: `{{ 'products.product.on_sale' | t }}`,
       };
 
       window.accessibilityStrings = {
@@ -299,6 +300,14 @@
         shareSuccess: `{{ 'general.share.success_message' | t }}`,
         pauseSlideshow: `{{ 'sections.slideshow.pause_slideshow' | t }}`,
         playSlideshow: `{{ 'sections.slideshow.play_slideshow' | t }}`,
+      };
+
+      window.theme = {
+        settings: {
+          sale_badge_color_scheme: '{{ settings.sale_badge_color_scheme }}',
+          sold_out_badge_color_scheme: '{{ settings.sold_out_badge_color_scheme }}',
+          custom_badge_color_scheme: '{{ settings.custom_badge_color_scheme }}'
+        }
       };
     </script>
 
