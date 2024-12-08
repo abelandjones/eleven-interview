@@ -31397,20 +31397,28 @@
           ] })
         ] })
       ] }) }, pokemon.id)) }),
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex justify-center mt-8", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex justify-center items-center mt-8", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+          "button",
+          {
+            onClick: () => setCurrentPage(1),
+            disabled: currentPage === 1,
+            className: "px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50",
+            children: "First"
+          }
+        ),
         /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
           "button",
           {
             onClick: handlePreviousPage,
             disabled: currentPage === 1,
-            className: "px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50",
+            className: "mx-2 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50",
             children: "Previous"
           }
         ),
         /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("span", { className: "mx-4 text-lg font-semibold", children: [
-          "Page ",
           currentPage,
-          " of ",
+          "/",
           totalPages
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
@@ -31418,8 +31426,17 @@
           {
             onClick: handleNextPage,
             disabled: currentPage === totalPages,
-            className: "px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50",
+            className: "mx-2 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50",
             children: "Next"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+          "button",
+          {
+            onClick: () => setCurrentPage(totalPages),
+            disabled: currentPage === totalPages,
+            className: "px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50",
+            children: "Last"
           }
         )
       ] })

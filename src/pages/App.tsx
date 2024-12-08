@@ -94,21 +94,35 @@ export function App() {
           </div>
         ))}
       </div>
-      <div className="flex justify-center mt-8">
+      <div className="flex justify-center items-center mt-8">
         <button
-          onClick={handlePreviousPage}
+          onClick={() => setCurrentPage(1)}
           disabled={currentPage === 1}
           className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
         >
+          First
+        </button>
+        <button
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+          className="mx-2 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+        >
           Previous
         </button>
-        <span className="mx-4 text-lg font-semibold">Page {currentPage} of {totalPages}</span>
+        <span className="mx-4 text-lg font-semibold">{currentPage}/{totalPages}</span>
         <button
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+          className="mx-2 px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
         >
           Next
+        </button>
+        <button
+          onClick={() => setCurrentPage(totalPages)}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+        >
+          Last
         </button>
       </div>
     </div>
