@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "../components/ui/card";
 
 export function App() {
   const [pokemonList, setPokemonList] = useState([]);
@@ -58,8 +59,8 @@ export function App() {
   if (error) return <div className="text-center text-red-600 text-lg">{error}</div>;
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold text-center mb-8">Pokémon - Gotta Catch 'Em All</h1>
+    <div className="container page-width">
+      <h1 className="mb-10">Pokémon - Gotta Catch 'Em All</h1>
       <div className="mb-6 flex justify-center">
         <input
           type="text"
@@ -69,21 +70,27 @@ export function App() {
           className="border border-gray-300 rounded p-2 w-full max-w-md"
         />
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="flex flex-wrap -mx-3">
         {filteredPokemonList.map((pokemon) => (
-          <div key={pokemon.id} className="bg-white rounded-lg shadow-md p-4">
-            <img
-              src={pokemon.sprites.front_default}
-              alt={pokemon.name}
-              className="w-full h-32 object-contain mb-4"
-            />
-            <h2 className="text-lg font-semibold text-center capitalize mb-2">{pokemon.name}</h2>
-            <p className="text-sm text-gray-700">
-              <strong>Height:</strong> {pokemon.height} | <strong>Weight:</strong> {pokemon.weight}
-            </p>
-            <p className="text-sm text-gray-700">
-              <strong>Types:</strong> {pokemon.types.map((type) => type.type.name).join(", ")}
-            </p>
+          <div key={pokemon.id} className="w-full sm:w-1/2 lg:w-1/4 xl:w-1/5 px-3 mb-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-center capitalize">{pokemon.name}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <img
+                  src={pokemon.sprites.front_default}
+                  alt={pokemon.name}
+                  className="w-full h-32 object-contain mb-4"
+                />
+                <CardDescription>
+                  <strong>Height:</strong> {pokemon.height} | <strong>Weight:</strong> {pokemon.weight}
+                </CardDescription>
+                <CardDescription>
+                  <strong>Types:</strong> {pokemon.types.map((type) => type.type.name).join(", ")}
+                </CardDescription>
+              </CardContent>
+            </Card>
           </div>
         ))}
       </div>
