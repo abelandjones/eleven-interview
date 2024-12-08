@@ -31382,7 +31382,10 @@
         fetchPokemonDetails(startIndex, endIndex);
       }
     }, [currentPage, pokemonList, searchQuery]);
-    const displayedPokemon = searchQuery ? filteredPokemonList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage) : filteredPokemonList;
+    const displayedPokemon = filteredPokemonList.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage
+    );
     return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "container page-width", children: [
       /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h1", { className: "mb-10", children: "Pok\xE9mon - Gotta Catch 'Em All" }),
       loading && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("div", { className: "text-center text-xl font-bold", children: "Loading..." }),

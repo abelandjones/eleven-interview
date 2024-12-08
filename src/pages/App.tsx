@@ -101,9 +101,10 @@ export function App() {
     }
   }, [currentPage, pokemonList, searchQuery]);
 
-  const displayedPokemon = searchQuery
-  ? filteredPokemonList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage) // Slice filtered list for search
-  : filteredPokemonList; // Use the detailed data fetched for the current page
+  const displayedPokemon = filteredPokemonList.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
     <div className="container page-width">
