@@ -366,6 +366,11 @@
   margin-top: 1rem;
 }
 
+.product-card-wrapper .card-information {
+  position: relative;
+  z-index: 2;
+}
+
 .card-swatches {
   display: flex;
   gap: 20px;
@@ -380,9 +385,6 @@
   border: 1px solid rgba(var(--color-foreground), 0.25);
   border-radius: 50%;
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   transition: border-color 0.3s ease;
 }
 
@@ -390,22 +392,16 @@
   border: 2px solid rgba(var(--color-foreground));
 }
 
-.card-swatches__inner {
-  /* The swatch is smaller than it's container */
-  width: 75%; 
-  height: 75%;
-
-  /* Ensures clean circular design */
-  border-radius: 50%;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .card-swatches__swatch {
-  width: 100%;
-  height: 100%;
+  width: 22px;
+  height: 22px;
+
+  /* Center within it's parent */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
