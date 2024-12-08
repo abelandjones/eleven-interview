@@ -1,3 +1,17 @@
+/*
+** Should use a more robust solution for this such as Shopify.formatMoney or 
+** '/src/utils/formatters.ts'
+*/
+function formatMoney(amount, currency) {
+  return `£${(amount / 100).toFixed(2)}`;
+}
+
+function generateSrcSet(image, widths) {
+  return widths
+    .map((width) => `${image}?width=${width} ${width}w`)
+    .join(", ");
+}
+
 function getFocusableElements(container) {
   return Array.from(
     container.querySelectorAll(
@@ -1063,3 +1077,229 @@ class ProductRecommendations extends HTMLElement {
 }
 
 customElements.define('product-recommendations', ProductRecommendations);
+
+class ProductCard extends HTMLElement {
+  constructor() {
+    super();
+    
+    this.sectionId = this.id;
+    this.swatches = this.querySelectorAll('.card-swatches__item');
+    if (this.swatches.length > 1 && this.sectionId) {
+      this.media = this.querySelector('.card__media .media');
+      this.price = this.querySelector('.price');
+      this.rating = this.querySelector('.rating');
+      this.heading = this.querySelectorAll('.card__heading');
+      this.badges = this.querySelector('.card__badge');
+      this.vendor = this.querySelector('.card__vendor');
+
+      // Register swatch click event listeners
+      this.swatches.forEach(swatch => swatch.addEventListener('click', this.updateProduct.bind(this)));
+    }
+  }
+
+  updateProduct(event) {
+
+    // Prevent default link behavior
+    event.preventDefault();
+
+    const current = event.currentTarget;
+    const handle = current.dataset.productHandle;
+    if (handle) {
+      // Fetch product data from Shopify
+      fetch(`${window.Shopify.routes.root}products/${handle}.js`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Product not found');
+        }
+        return response.json();
+      })
+      .then((product) => {
+        // Update product details
+        this.updateTitle(product);
+        this.updatePrice(product);
+        this.updateMedia(product);
+        this.updateBadges(product);
+        this.updateVendor(product);
+
+        // Update active swatch
+        this.swatches.forEach((swatch) => {
+          if (swatch.dataset.productHandle === handle) {
+            swatch.classList.add('card-swatches__item--active');
+            
+            this.updateRating(swatch.dataset.rating);
+          } else {
+            swatch.classList.remove('card-swatches__item--active');
+          }
+        });
+      })
+      .catch((error) => {
+        console.error('Error updating product card:', error);
+      });
+    }
+  }
+
+  updateTitle(product) {
+    // Update product title
+    this.heading.forEach((heading) => {
+      const link = heading.querySelector('a');
+      if (link) {
+        link.href = product.url;
+        link.textContent = product.title;
+      }
+    });
+  }
+
+  updatePrice(product) {
+    const regular = this.price.querySelector(".price__regular .price-item--regular");
+    const sale = this.price.querySelector(".price__sale .price-item--sale");
+    const compare = this.price.querySelector(".price__sale .price-item--regular");
+    const unit = this.price.querySelector(".unit-price .unit-price-value");
+    const measurement = this.price.querySelector(".unit-price .unit-price-measurement");
+    const currency = window.Shopify?.currency?.active || "GBP";
+
+    // Update regular price
+    regular.textContent = formatMoney(product.price, currency);
+
+    // Update sale price and badges
+    if (product.compare_at_price && product.compare_at_price > product.price) {
+      compare.textContent = formatMoney(product.compare_at_price, currency);
+      sale.textContent = formatMoney(product.price, currency);
+      this.price.classList.add("price--on-sale");
+    } else {
+      compare.textContent = "";
+      sale.textContent = "";
+      this.price.classList.remove("price--on-sale");
+    }
+
+    // Update unit price
+    if (product.unit_price) {
+      unit.textContent = formatMoney(product.unit_price, currency);
+      measurement.textContent = `${product.unit_price_measurement.reference_value || ""} ${product.unit_price_measurement.reference_unit}`;
+      this.price.querySelector(".unit-price").classList.remove("hidden");
+    } else {
+      this.price.querySelector(".unit-price").classList.add("hidden");
+    }
+  }
+
+  updateMedia(product) {
+    // Update product media
+    if (this.media && product.media) {
+      let count = 0;
+      let html = '';
+      for (const media of product.media) {
+        if (media.media_type === "image") {
+          if (count < 1 || this.media.classList.contains("media--show-secondary-image")) {
+            html += `
+              <img
+                srcset="
+                  ${generateSrcSet(media.src, [165, 360, 533, 720, 940, 1066])}
+                  ${media.src} ${media.width}w
+                "
+                src="${media.src}"
+                sizes="(min-width: 1200px) 300px, (min-width: 990px) 25vw, 50vw"
+                alt="${media.alt || product.title}"
+                class="motion-reduce"
+                loading="lazy"
+                width="${media.width}"
+                height="${media.height}"
+              >
+            `;
+          }
+          count++;
+
+          if (count > 1) {
+            break;
+          }
+        }
+      }
+
+      // Update the media container's HTML
+      this.media.innerHTML = html;
+    }
+  }
+
+  updateBadges(product) {
+    // Update product badges
+    if (this.badges) {
+      let html = '';
+
+      // "Sold Out" Badge
+      if (!product.available) {
+        html += `
+          <span
+            id="NoMediaStandardBadge-${this.sectionId}-${product.id}"
+            class="badge badge--bottom-left color-${window.theme.settings.sold_out_badge_color_scheme}"
+            aria-label="${window.variantStrings.soldOut}"
+          >
+            ${window.variantStrings.soldOut}
+          </span>
+        `;
+      } else if (product.compare_at_price > product.price) {
+        html += `
+          <span
+            id="NoMediaStandardBadge-${this.sectionId}-${product.id}"
+            class="badge badge--bottom-left color-${window.theme.settings.sale_badge_color_scheme}"
+            aria-label="${window.variantStrings.onSale}"
+          >
+            ${window.variantStrings.onSale}
+          </span>
+        `;
+      }
+
+      // Custom Badges from Tags
+      const badges = product.tags.filter((tag) => tag.startsWith("badge_"));
+      badges.forEach((tag) => {
+        const title = tag.replace("badge_", "").replace("_", " ");
+        html += `
+          <span
+            id="CustomBadge-${this.sectionId}-${product.id}-${title.replace(" ", "-").toLowerCase()}"
+            class="badge badge--bottom-left color-${window.theme.settings.custom_badge_color_scheme}"
+            aria-label="${title}"
+          >
+            ${title}
+          </span>
+        `;
+      });
+
+      // Update the badges container's HTML
+      this.badges.innerHTML = html;
+    }
+  }
+
+  updateRating(rating) {
+    if (this.rating) {
+      // Update product rating
+      if (rating > 0) {
+
+        // Show the rating if it's available
+        const spans = this.rating.querySelectorAll('span');
+
+        // The rating text is in the last span
+        const last = spans[spans.length - 1];
+        if (last) {
+          last.textContent = rating;
+        }
+
+        this.rating.classList.remove('hidden');
+      } else {
+
+        // Hide the rating if it's not available
+        this.rating.classList.add('hidden');
+      }
+    }
+  }
+
+  updateVendor(product) {
+    if (this.vendor) {
+      // Update product vendor
+      if (product.vendor) {
+        this.vendor.textContent = product.vendor;
+        this.vendor.classList.remove('hidden');
+      } else {
+        this.vendor.classList.add('hidden');
+      }
+    }
+  }
+}
+
+customElements.define('product-card', ProductCard);
